@@ -4,10 +4,6 @@ import requests
 import time
 from datetime import datetime, timedelta, timezone
 
-# ============================================================
-# SETTINGS
-# ============================================================
-
 API_KEY = os.getenv("COINGECKO_API_KEY")
 
 FULL_LOAD_FILE = "crypto_hourly_full_load_100coins.json"
@@ -17,17 +13,13 @@ URL = "https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart/range"
 
 INCREMENTAL_DAYS = 7
 
-# ============================================================
 # CHECK API KEY
-# ============================================================
 
 if not API_KEY:
     print("ERROR: COINGECKO_API_KEY is not set.")
     exit()
 
-# ============================================================
 # READ COINS FROM FULL LOAD
-# ============================================================
 
 if not os.path.exists(FULL_LOAD_FILE):
     print("ERROR: Full Load file not found:")
@@ -43,16 +35,12 @@ if not coins:
     print("ERROR: No coins found in Full Load file.")
     exit()
 
-print("========================================")
 print("INCREMENTAL LOAD GENERATOR")
-print("========================================")
 print("Coins found in Full Load:", len(coins))
 print("Incremental period:", INCREMENTAL_DAYS, "days")
 print()
 
-# ============================================================
 # TIME WINDOW
-# ============================================================
 
 end_time = datetime.now(timezone.utc)
 start_time = end_time - timedelta(days=INCREMENTAL_DAYS)
@@ -61,9 +49,7 @@ print("Start:", start_time.isoformat())
 print("End:", end_time.isoformat())
 print()
 
-# ============================================================
 # API SETUP
-# ============================================================
 
 headers = {
     "x-cg-demo-api-key": API_KEY
@@ -72,15 +58,11 @@ headers = {
 all_data = []
 seen = set()
 
-# ============================================================
 # DOWNLOAD DATA
-# ============================================================
 
 for coin_number, coin in enumerate(coins, start=1):
 
-    print("========================================")
     print(f"Coin {coin_number}/{len(coins)}: {coin}")
-    print("========================================")
 
     from_timestamp = int(start_time.timestamp())
     to_timestamp = int(end_time.timestamp())
@@ -102,10 +84,8 @@ for coin_number, coin in enumerate(coins, start=1):
 
         print("Status:", response.status_code)
 
-        # ----------------------------------------------------
         # RATE LIMIT
-        # ----------------------------------------------------
-
+       
         if response.status_code == 429:
             print()
             print("RATE LIMIT HIT.")
@@ -113,9 +93,7 @@ for coin_number, coin in enumerate(coins, start=1):
             print("Run the script again later.")
             exit()
 
-        # ----------------------------------------------------
         # OTHER ERRORS
-        # ----------------------------------------------------
 
         if response.status_code != 200:
             print("ERROR:")
@@ -130,10 +108,7 @@ for coin_number, coin in enumerate(coins, start=1):
 
         print("Observations:", len(prices))
 
-        # ----------------------------------------------------
         # STORE RECORDS
-        # ----------------------------------------------------
-
         for i, price_record in enumerate(prices):
 
             timestamp = price_record[0]
@@ -173,9 +148,6 @@ for coin_number, coin in enumerate(coins, start=1):
         print("REQUEST ERROR:", e)
         continue
 
-# ============================================================
-# CREATE OUTPUT
-# ============================================================
 
 output = {
     "source": "CoinGecko API",
@@ -188,23 +160,17 @@ output = {
     "data": all_data
 }
 
-# ============================================================
 # SAVE FILE
-# ============================================================
 
 with open(OUTPUT_FILE, "w", encoding="utf-8") as file:
     json.dump(output, file, indent=2)
 
-# ============================================================
+
 # FINAL SUMMARY
-# ============================================================
 
 print()
-print("========================================")
 print("INCREMENTAL LOAD COMPLETE")
-print("========================================")
 print("Coins:", len(coins))
 print("Total observations:", len(all_data))
 print("Expected approximately:", len(coins) * INCREMENTAL_DAYS * 24)
 print("File:", OUTPUT_FILE)
-print("========================================")
