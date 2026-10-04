@@ -4,10 +4,6 @@ import requests
 import time
 from datetime import datetime, timedelta, timezone
 
-# =========================
-# SETTINGS
-# =========================
-
 API_KEY = os.getenv("COINGECKO_API_KEY")
 
 COINS = [
@@ -124,22 +120,15 @@ OUTPUT_FILE = "crypto_hourly_full_load_100coins.json"
 URL = "https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart/range"
 
 
-# =========================
-# CHECK API KEY
-# =========================
+# CHECKING API KEY
 
 if not API_KEY:
     print("ERROR: COINGECKO_API_KEY is not set.")
     exit()
 
+# VALIDATING COINS
 
-# =========================
-# VALIDATE COINS
-# =========================
-
-print("\n========================================")
 print("VALIDATING COIN IDS")
-print("========================================")
 
 valid_coins = []
 invalid_coins = []
@@ -179,10 +168,7 @@ for coin in COINS:
 
     time.sleep(0.5)
 
-
-print("\n========================================")
 print("VALIDATION COMPLETE")
-print("========================================")
 print("Valid coins:", len(valid_coins))
 print("Invalid coins:", len(invalid_coins))
 
@@ -193,33 +179,23 @@ if invalid_coins:
 
 print("\nValid coins will be used for the Full Load.")
 
-
-# =========================
 # TIME RANGE
-# =========================
 
 end_time = datetime.now(timezone.utc)
 start_time = end_time - timedelta(days=DAYS)
 
-
-# =========================
 # STORAGE
-# =========================
 
 all_data = []
 
 seen = set()
 
 
-# =========================
 # COLLECT DATA
-# =========================
 
 for coin_number, coin in enumerate(valid_coins, start=1):
 
-    print("\n========================================")
     print(f"Coin {coin_number}/{len(valid_coins)}: {coin}")
-    print("========================================")
 
     coin_start = start_time
 
@@ -321,9 +297,7 @@ for coin_number, coin in enumerate(valid_coins, start=1):
             coin_start = coin_end
 
 
-# =========================
 # SAVE FILE
-# =========================
 
 output = {
     "source": "CoinGecko API",
@@ -340,14 +314,10 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as file:
     json.dump(output, file, indent=2)
 
 
-# =========================
 # SUMMARY
-# =========================
 
 print("\n")
-print("========================================")
 print("FULL LOAD COMPLETE")
-print("========================================")
 print("Requested coins:", len(COINS))
 print("Valid coins:", len(valid_coins))
 print("Invalid coins:", len(invalid_coins))
@@ -355,4 +325,3 @@ print("Total observations:", len(all_data))
 print("Expected approximate observations:")
 print(len(valid_coins) * DAYS * 24)
 print("File:", OUTPUT_FILE)
-print("========================================")
