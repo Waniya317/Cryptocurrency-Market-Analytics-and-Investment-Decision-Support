@@ -2,7 +2,7 @@
 
 **Owner:** Waniya
 **Reviewer:** Khushbakht
-**Last updated:** 2026-10-10
+**Last updated:** 2026-10-11
 
 ## Source JSON structure
 { source, load_type, frequency, number_of_coins, coins[], start_time, end_time,
@@ -62,13 +62,45 @@ Primary key: (coin_id, event_ts)
 | rows_updated | LONG | Rows updated |
 | error_message | STRING | Null on success |
 
+
 ## Cleaning Rules (Silver)
-- Drop null coin_id / timestamp
-- Remove price <= 0
-- Deduplicate on (coin_id, event_ts), keep latest load_timestamp
-- Standardize coin_id to lowercase and trimmed
+
+- Filter out records with null `coin_id`, timestamp, or price.
+- Keep records where `price >= 0`.
+- Keep records where `market_cap` and `total_volume` are either null or non-negative.
+- Deduplicate records using `(coin_id, event_ts)`.
+- Merge cleaned records into `crypto.silver.market_data_clean`.
+
 
 ## Schema Change History
 | Date | Change | Reason | Changed By |
 |---|---|---|---|
 | 2026-10-10 | Raw JSON field "timestamp" stored as ts_ms | Clear unit (milliseconds) | Khushbakht |
+
+
+**Data Flow**
+
+1. Full-load and incremental JSON files provide cryptocurrency market data.
+2. Bronze ingestion stores raw records in `crypto.bronze.market_data_raw`.
+3. Schema-drift and invalid-record checks can send problematic records to `crypto.bronze.quarantine`.
+4. Silver transformation validates records, converts timestamps, derives date and hour fields, removes duplicates and merges cleaned records into `crypto.silver.market_data_clean`.
+5. Pipeline execution details and errors are recorded in `crypto.ops.pipeline_execution_logs`.
+6. Gold-layer details will be added after its implementation is verified.
+
+**Current Validation Status**
+
+**Validation Date:** 2026-10-11  
+**Updated By:** Waniya
+
+| Table | Record Count |
+|---|---:|
+| `crypto.bronze.market_data_raw` | 66,401 |
+| `crypto.silver.market_data_clean` | 66,401 |
+| `crypto.bronze.quarantine` | 0 |
+The pipeline validation checks passed. Bronze and Silver currently contain the same number of records, and the quarantine table contained no records at the time of validation.
+
+## Documentation Update History
+
+| Date | Change | Reason | Changed By |
+|---|---|---|---|
+| 2026-10-11 | Added data flow and pipeline validation results | Document pipeline implementation and validation performed | Waniya |

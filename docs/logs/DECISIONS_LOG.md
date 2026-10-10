@@ -14,3 +14,8 @@ Append new rows at the bottom. Do not rewrite old rows.
 | 2026-10-10 | Shared bronze_load() in 01_logging_utils | 02 and 03 stay short, same logic for both loads | Khushbakht |
 | 2026-10-10 | Notebooks start with %run in its own cell | %run only works as a magic cell, not a comment | Khushbakht |
 | 2026-10-10 | All MD docs live in GitHub as the single source of truth; log files are append-only | Waniya can clone, update, and push without conflicts or stale copies | Khushbakht, Waniya |
+| 2026-10-10 | Silver transformation converts millisecond timestamps into timestamps and derives event_date and event_hour | Supports time-based analysis and consistent Silver data | Waniya |
+| 2026-10-10 | Silver records are deduplicated using (coin_id, event_ts) before merging | Prevents duplicate records for the same coin and timestamp | Waniya |
+| 2026-10-10 | Backfill runner uses a specified start_date and end_date | Allows historical data to be reprocessed for a selected period | Waniya |
+| 2026-10-10 | Schema-drift checks run separately from the standard ingestion process | Helps identify unexpected JSON fields without interrupting normal ingestion | Waniya |
+| 2026-10-11 | Pipeline validation includes record counts, duplicate-key checks, null checks, and timestamp checks | Verifies data quality across the Bronze and Silver layers | Waniya |

@@ -23,33 +23,36 @@ Each person reviews the other's work before merging.
 | DECISIONS_LOG.md | docs/logs/ | Design decisions | In progress |
 
 ## FILES WANIYA WILL CREATE
+
 | File | Location | Purpose | Status |
 |---|---|---|---|
-| 04_silver_transform | src/pyspark/ | Clean, validate, dedupe -> Silver (MERGE INTO) | TODO |
-| 05_backfill_runner | src/pyspark/ | Runs 02/03/04 by date, batch ID, folder path | TODO |
-| 06_schema_drift_quarantine | src/pyspark/ | Quarantine review + schema evolution for Silver | TODO |
-| 07_validation_checks | src/pyspark/ | Row counts, duplicates, nulls, reconciliation | TODO |
-| DATA_MODEL.md | docs/ | Bronze + Silver columns, types, keys | TODO |
-| ERROR_LOG.md | docs/logs/ | All errors and fixes | TODO |
-| VISUALIZATION_LOG.md | docs/logs/ | Dashboard and visual tracking | TODO |
+| 04_silver_transform | src/pyspark/ | Clean, validate, dedupe -> Silver (MERGE INTO) | DONE |
+| 05_backfill_runner | src/pyspark/ | Runs backfill by date range | DONE |
+| 06_schema_drift_quarantine | src/pyspark/ | Schema-drift detection and quarantine handling | DONE |
+| 07_validation_checks | src/pyspark/ | Row counts, duplicates, nulls, reconciliation | DONE |
+| DATA_MODEL.md | docs/ | Bronze + Silver columns, types, keys | DONE |
+| ERROR_LOG.md | docs/logs/ | All errors and fixes | DONE |
+| VISUALIZATION_LOG.md | docs/logs/ | Dashboard and visual tracking | UPDATED |
 
 ## Setup Tasks
 | Task | Owner | Reviewer | Status |
 |---|---|---|---|
 | Databricks setup (catalog, schemas, Volume) | Khushbakht | Waniya | DONE |
 | Git folder linked + Bronze notebooks pushed | Khushbakht | Waniya | DONE |
-| All MD docs + screenshots uploaded to GitHub | Khushbakht | Waniya | IN PROGRESS |
-| Waniya clones repo + sets up her own workspace + uploads JSON to her Volume | Waniya | Khushbakht | TODO |
+| All MD docs + screenshots uploaded to GitHub | Khushbakht | Waniya | VERIFY FINAL PUSH |
+| Waniya clones repo + sets up her own workspace + uploads JSON to her Volume | Waniya | Khushbakht | DONE |
 | Idempotency proof for Bronze | Khushbakht | Waniya | DONE |
-| Idempotency proof for Silver | Waniya | Khushbakht | TODO |
+| Idempotency proof for Silver | Waniya | Khushbakht | DONE |
 
-## Waniya Onboarding (do this first)
-1. Pull or clone the repo (Databricks: Workspace -> Create -> Git folder -> repo URL, or git clone).
-2. Read docs/PROJECT_PLAN.md, docs/TASK_DIVISION.md, and the logs in docs/logs/.
-3. In her Databricks: create catalog crypto, schemas bronze/silver/ops, Volume
-   crypto.bronze.raw_files, and upload both JSON files into it.
-4. Run 00 and 01 from src/pyspark/ so the same 4 tables exist in her workspace.
-5. Create branch feat/silver-waniya and start on 04_silver_transform.
+
+
+## Waniya Onboarding
+
+1. Cloned the repository and set up the Databricks workspace.
+2. Reviewed the project plan, task division, and documentation logs.
+3. Created the required catalog, schemas, Volume, and uploaded both JSON files.
+4. Ran the configuration and logging notebooks.
+5. Created and ran the Silver, backfill, schema-drift, and validation notebooks.
 
 ## Phase 3 Preview (proposed)
 | Task | Owner |
