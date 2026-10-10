@@ -1,0 +1,13 @@
+{
+  "source": "CoinGecko API",
+  "load_type": "full",
+  "frequency": "hourly",
+  "number_of_coins": 2,
+  "coins": [
+    "bitcoin",
+    "ethereum"
+  ],
+  "start_time": "2026-09-10T19:23:19.739276+00:00",
+  "end_time": "2026-10-10T19:23:19.739276+00:00",
+  "data": []
+}
