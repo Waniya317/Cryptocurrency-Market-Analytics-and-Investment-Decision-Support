@@ -16,7 +16,6 @@ Raw JSON (Unity Catalog Volume) -> Bronze -> Silver -> Gold (Phase 3) -> Power B
 | docs/ | PROJECT_PLAN.md, TASK_DIVISION.md, DATA_MODEL.md |
 | docs/logs/ | WORKLOG, ERROR_LOG, PIPELINE_RUN_LOG, VISUALIZATION_LOG, DECISIONS_LOG |
 | docs/screenshots/ | Run proof |
-
 ## Setup
 1. Databricks Free Edition: create catalog `crypto` with schemas bronze, silver, ops.
 2. Create Volume crypto.bronze.raw_files and upload both JSON files from data/raw/ directly into it.
@@ -27,7 +26,16 @@ Raw JSON (Unity Catalog Volume) -> Bronze -> Silver -> Gold (Phase 3) -> Power B
 2. 02_bronze_full_load
 3. 03_bronze_incremental
 4. 04_silver_transform (Waniya)
-5. 05_backfill_runner, 06_schema_drift_quarantine, 07_validation_checks (Waniya)
+5. 05_backfill_runner,
+6. 06_schema_drift_quarantine
+7. 07_validation_checks (Waniya)
+8. 08_gold_setup
+9.  09_gold_dimensions
+10. 10_gold_facts
+11. 11_gold_optimize,
+12. 12_pipeline_orchestrator
+13. 13_gold_validation
+14. 14_bi_views
 
 Each notebook starts with a %run line alone in its own cell.
 Parameters: widgets `path` and `batch_id` on 02 and 03.
