@@ -19,3 +19,6 @@ Append new rows at the bottom. Do not rewrite old rows.
 | 2026-10-10 | Backfill runner uses a specified start_date and end_date | Allows historical data to be reprocessed for a selected period | Waniya |
 | 2026-10-10 | Schema-drift checks run separately from the standard ingestion process | Helps identify unexpected JSON fields without interrupting normal ingestion | Waniya |
 | 2026-10-11 | Pipeline validation includes record counts, duplicate-key checks, null checks, and timestamp checks | Verifies data quality across the Bronze and Silver layers | Waniya |
+| 2026-10-16 | Phase 3 split: Khushbakht = notebooks 08-11 + data model/DAG/FinOps; Waniya = 12-14 + Power BI + report export | Notebooks in sequence, equal workload (~15h each) | Khushbakht, Waniya |
+| 2026-10-16 | Gold = 4 dims/bridge + 3 facts, incl. fact_portfolio_daily and dim_scenario | Needed for business questions 6 and 11 | Khushbakht |
+| 2026-10-16 | Power BI connects directly to Waniya's workspace using a Databricks token | Token option available; one .pbix connects to one workspace | Khushbakht, Waniya |
