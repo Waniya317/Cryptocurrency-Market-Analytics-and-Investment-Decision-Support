@@ -70,20 +70,43 @@ Optimization: liquid clustering plus OPTIMIZE. Before/after evidence:
 | Two Databricks workspaces | Free Edition is one user per workspace; GitHub is the shared source of truth, Power BI connects to Waniya's workspace |
 
 ## 5. Spark UI and DAG analysis
-Most complex transformation: fact_coin_daily aggregation in 10_gold_facts.
-[Insert screenshot: Query Profile or DAG from docs/screenshots/]
-How Spark executed it (replace with what your screenshot shows):
-- Scan: Delta scan of crypto.silver.market_data_clean; date filters are pushed down to
-  the scan (predicate pushdown) so only the needed files are read (data skipping).
-- Shuffle 1: Exchange hashpartitioning(coin_key) so rows of one coin are together for the
-  window function (previous price / previous volume) and for the daily aggregation.
-- Aggregation: HashAggregate (partial, then final) computing open, close, high, low, avg,
-  std dev per coin and day.
-- Merge: join of the new rows with the Gold target on (coin_key, date_key), then insert
-  or update only changed rows.
-Evidence: output of explain("formatted") for the aggregation, pasted below.
-<paste Exchange / PushedFilters / HashAggregate lines>
 
+Most complex transformation: the fact_coin_daily aggregation in 10_gold_facts
+(Silver -> window functions -> daily aggregate). Plan captured with df.explain("formatted").
+
+[Insert screenshot: Query Profile of the fact_coin_daily MERGE from the notebook run]
+
+Physical plan, read bottom to top:
+| Step | Operator | What it does |
+|---|---|---|
+| 1 | PhotonScan parquet crypto.silver.market_data_clean | Reads the Silver Delta table (parquet files) |
+| 2-4 | PhotonShuffleExchange (Sink/Source) | SHUFFLE 1: rows are redistributed by coin_id so all hours of one coin are on the same partition |
+| 5 | PhotonSort | Sorts each coin's rows by event_ts, needed for lag() |
+| 6 | PhotonWindow | Window functions per coin: previous price and previous volume (lag), plus mean and std dev of volume for the volume-spike flag |
+| 7 | PhotonProject | Computes hourly_return_pct, volume_change_pct, volume_to_mcap_ratio, coin_key and date_key |
+| 8 | PhotonGroupingAgg (partial) | Map-side aggregation per (coin_key, date_key) BEFORE the shuffle, which shrinks the data that must move |
+| 9-11 | PhotonShuffleExchange (Sink/Source) | SHUFFLE 2: partial aggregates for the same (coin_key, date_key) are brought together |
+| 12 | PhotonGroupingAgg (final) | open/close price (min_by/max_by on event_ts), high, low, averages, volatility (std dev), hours_count |
+| 13 | PhotonProject | Computes daily_return_pct, intraday_range_pct and load_timestamp |
+| 14-15 | PhotonColumnarToRow, ResultStage | Returns the result to the MERGE |
+
+Key points:
+- Shuffles: 2 (stage boundaries "ShuffleMapStage"). Shuffle 1 is required because window
+  functions need each coin's rows together and ordered; shuffle 2 is required for the
+  group-by on (coin_key, date_key). Shuffles are the most expensive operations in Spark.
+- Partial then final aggregation (steps 8 and 12) is the standard two-phase aggregate;
+  it reduces the data crossing shuffle 2.
+- Photon: every operator runs in the vectorised Photon engine (the "Photon" prefix),
+  which is why the plan has no row-based Spark operators until the final ColumnarToRow.
+- AdaptiveSparkPlan: Adaptive Query Execution is on, so shuffle partition counts are
+  adjusted at run time. With about 66,000 rows most shuffle partitions are tiny, and AQE
+  coalesces them.
+- Predicate pushdown: this refresh reads the whole Silver table with no WHERE clause, so
+  there is no filter to push down. Pushdown and data skipping apply to the dashboard
+  queries (filter by coin_key and date_key), where liquid clustering lets Spark skip
+  files. Evidence: <paste PushedFilters from explain of the query in 11_gold_optimize>.
+- Why not avoid the first shuffle: the window needs per-coin ordering; at this data size
+  the cost is negligible, and at enterprise scale Silver could be clustered by coin_id.
 ## 6. Dashboard
 [Insert screenshots: Market Overview, Risk and Performance, Intraday Analysis,
 Decision Support, Pipeline Monitoring]
