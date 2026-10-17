@@ -19,5 +19,13 @@ Append new rows at the bottom. Do not rewrite old rows.
 | 2026-10-11 | Waniya | Ran pipeline validation checks | | Validation passed; Bronze 66401 records, Silver 66401 records, quarantine 0 | Record validation results |
 | 2026-10-11 | Waniya | Captured and uploaded four pipeline screenshots | | silver_transform, backfill_runner, schema_drift, validation_checks screenshots uploaded | Verify screenshot paths in repository |
 | 2026-10-11 | Waniya | Updated DATA_MODEL.md, ERROR_LOG.md, PIPELINE_RUN_LOG.md, and VISUALIZATION_LOG.md | | Documentation updated with pipeline results and validation evidence | Review remaining documentation and commit changes to GitHub |
-
-
+| 2026-10-16 | Khushbakht | Rebalanced Phase 3 split, kept Phase 2 content in plan docs, mapped 11 business questions to Gold | | Docs ready | Build 08-11 |
+| 2026-10-17 | Khushbakht | Pushed Phase 3 plan, task division, Gold data model and README updates | | Phase 3 docs on GitHub | Add REPORT.md, then build 08-11 |
+| 2026-10-17 | Khushbakht | Added REPORT.md, completed logs (run log, viz log, decisions, errors) for Phase 3 | | Docs complete | Build notebooks 08-11 |
+| 2026-10-17 | Khushbakht | Pushed Report.md, README, run log and visualization log updates to GitHub (commits 00:13-00:15) | | On GitHub | Build Gold notebooks 08-11 |
+| 2026-10-17 | Khushbakht | Patched 00_config_schemas (Gold table names) and 01_logging_utils (gold_merge helpers) | | Done | Run 08 |
+| 2026-10-17 | Khushbakht | Built and ran 08_gold_setup, 09_gold_dimensions, 10_gold_facts, 11_gold_optimize | | Gold star schema created and loaded, runs logged in pipeline_execution_logs | Screenshots, push notebooks |
+| 2026-10-17 | Khushbakht | Hit Databricks kernel error (_control_lock) on notebook 00; reconnected compute and re-ran | | Logged as E007, resolved | Continue with 08 |
+| 2026-10-17 | Khushbakht | Captured explain("formatted") plan for the fact_coin_daily aggregation; uploaded optimize_before_after.png (12:48 push) | | Plan: 2 shuffles, window, two-phase aggregate, all Photon | Add Query Profile screenshot, finish report section 5 |
+| 2026-10-17 | Khushbakht | Updated TASK_DIVISION, PROJECT_PLAN, PIPELINE_RUN_LOG, ERROR_LOG, DECISIONS_LOG for Gold progress | | Docs match code | Commit + push everything; Waniya pulls and runs 08-14 in her workspace |
+| 2026-10-17 | Waniya | | | | |

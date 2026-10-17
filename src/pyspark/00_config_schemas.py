@@ -69,3 +69,21 @@ RAW_REC_SCHEMA = StructType([
     StructField("total_volume", DoubleType(), True),
 ])
 EXP_KEYS = {"coin_id", "timestamp", "price", "market_cap", "total_volume"}
+
+GOLD_SCHEMA = "gold"
+G = f"{CATALOG}.{GOLD_SCHEMA}"
+spark.sql(f"CREATE SCHEMA IF NOT EXISTS {G}")
+
+T_DIM_COIN     = f"{G}.dim_coin"
+T_DIM_DATE     = f"{G}.dim_date"
+T_DIM_HOUR     = f"{G}.dim_hour"
+T_DIM_SCENARIO = f"{G}.dim_scenario"
+T_BRIDGE       = f"{G}.bridge_scenario_coin"
+T_FACT_HOURLY  = f"{G}.fact_market_hourly"
+T_FACT_DAILY   = f"{G}.fact_coin_daily"
+T_FACT_PORTF   = f"{G}.fact_portfolio_daily"
+
+
+
+print(G, T_DIM_COIN)
+display(spark.sql("SHOW SCHEMAS IN crypto"))
