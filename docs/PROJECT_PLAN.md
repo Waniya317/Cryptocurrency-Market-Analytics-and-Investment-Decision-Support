@@ -4,7 +4,7 @@
 **Platform:** Databricks Free Edition, PySpark, Delta Lake, Power BI
 **Source:** Existing CoinGecko JSON files (manual ingestion approved by professor)
 **Repo:** https://github.com/Waniya317/Cryptocurrency-Market-Analytics-and-Investment-Decision-Support
-**Last updated:** 2026-10-16
+**Last updated:** 2026-10-17
 
 ## Architecture
 Raw JSON (Volume) -> Bronze (Delta) -> Silver (Delta) -> Gold (star schema) -> Power BI
@@ -55,7 +55,7 @@ logged, and schema-safe.
 | H | Schema drift / quarantine | Waniya | 06_schema_drift_quarantine | DONE |
 | I | Validation checks | Waniya | 07_validation_checks | DONE |
 | J | Data model docs | Waniya | DATA_MODEL.md | DONE |
-| K | README + final push | Khushbakht | README.md | Moved to Phase 3 (P16) |
+| K | README + final push | Khushbakht | README.md | DONE (final version: P16) |
 | L | Idempotency proof (Bronze) | Khushbakht | PIPELINE_RUN_LOG.md + screenshots | DONE |
 | L2 | Idempotency proof (Silver) | Waniya | PIPELINE_RUN_LOG.md | DONE |
 | M | Bronze notebooks pushed to GitHub | Khushbakht | src/pyspark/ 00-03 | DONE |
@@ -72,7 +72,7 @@ logged, and schema-safe.
 - [x] Parameterized loads (path, batch_id widgets) and backfill by date range
 - [x] Schema drift detected and quarantined (crypto.bronze.quarantine)
 - [x] pipeline_execution_logs created and populated
-- [ ] README updated (data models + how to run): moved to Phase 3 (P16)
+- [x] README updated (data models + how to run)
 - Known follow-ups (tracked as E004, E005, fixed in P0): price rule wording in
   DATA_MODEL vs Silver code, missing row counts for R006/R007.
 
@@ -101,30 +101,30 @@ dashboard on the Gold layer, and a final architecture + FinOps PDF report.
 | ID | Task | Owner | Output | Status |
 |---|---|---|---|---|
 | P0 | Fix Phase 2 loose ends (price rule, R006/R007 counts, screenshot names) | Waniya | Docs matched to code | TODO |
-| P1 | Gold DDL + liquid clustering | Khushbakht | 08_gold_setup | TODO |
-| P2 | Gold dimensions + scenario bridge | Khushbakht | 09_gold_dimensions | TODO |
-| P3 | Gold facts (hourly, daily, portfolio) with MERGE + logging | Khushbakht | 10_gold_facts | TODO |
-| P4 | OPTIMIZE + before/after evidence | Khushbakht | 11_gold_optimize | TODO |
-| P5 | Gold data dictionary + ER diagram | Khushbakht | docs/GOLD_DATA_MODEL.md | TODO |
+| P1 | Gold DDL + liquid clustering | Khushbakht | 08_gold_setup | DONE |
+| P2 | Gold dimensions + scenario bridge | Khushbakht | 09_gold_dimensions | DONE |
+| P3 | Gold facts (hourly, daily, portfolio) with MERGE + logging | Khushbakht | 10_gold_facts | DONE |
+| P4 | OPTIMIZE + before/after evidence | Khushbakht | 11_gold_optimize | DONE |
+| P5 | Gold data dictionary + ER diagram | Khushbakht | docs/GOLD_DATA_MODEL.md | DONE |
 | P6 | End-to-end orchestrator | Waniya | 12_pipeline_orchestrator | TODO |
 | P7 | Gold validation (FK integrity, duplicates) | Waniya | 13_gold_validation | TODO |
 | P8 | Audit/quarantine/intraday views for BI | Waniya | 14_bi_views | TODO |
 | P9 | Power BI connection (token) + star-schema model view | Waniya | .pbix | TODO |
 | P10 | Dashboards: 4 business pages + Pipeline Monitoring | Waniya | .pbix | TODO |
-| P11 | Spark UI / query profile screenshot + explanation | Khushbakht | docs/screenshots/ | TODO |
-| P12 | FinOps measurements and estimate | Khushbakht | REPORT.md section 7 | TODO |
+| P11 | Spark UI / query profile screenshot + explanation | Khushbakht | docs/screenshots/ | IN PROGRESS |
+| P12 | FinOps measurements and estimate | Khushbakht | REPORT.md section 7 | TODO (needs orchestrator timings) |
 | P13 | Architecture diagram | Khushbakht | docs/architecture.png | TODO |
-| P14 | Report sections: 1,2,4,7 + engineering decisions (K); drift/PII/Silver decisions, 5, 6 (W) | Both | docs/REPORT.md | TODO |
+| P14 | Report sections: 1,2,4,7 + engineering decisions (K); drift/PII/Silver decisions, 5, 6 (W) | Both | docs/REPORT.md | IN PROGRESS |
 | P15 | Optional prediction component (Q9, Q10) | Both | 15_prediction | Decide at check-in |
 | P16 | README final + tagged release | Khushbakht | v1.0 tag | TODO |
 | P17 | Final report PDF export | Waniya | docs/REPORT.pdf | TODO |
 
 ## Phase 3 Requirement Checklist
-- [ ] Star schema: fact + dimension tables (not copies of Silver)
-- [ ] Gold data dictionary with PK/FK relationships (ER diagram)
-- [ ] OPTIMIZE / Liquid Clustering demonstrated
-- [ ] Gold refreshes automatically after Silver (orchestrator)
-- [ ] Gold runs logged with rows aggregated + execution time
+- [x] Star schema: fact + dimension tables (not copies of Silver)
+- [x] Gold data dictionary with PK/FK relationships (ER diagram)
+- [x] OPTIMIZE / Liquid Clustering demonstrated
+- [ ] Gold refreshes automatically after Silver (orchestrator, notebook 12)
+- [x] Gold runs logged with rows aggregated + execution time (layer "gold")
 - [ ] Power BI connected to Gold; relationships match the star schema
 - [ ] Dashboard: at least 3 visuals + audit/error-log visuals
 - [ ] PDF: architecture diagram, decision log, DAG analysis, FinOps
@@ -139,6 +139,7 @@ dashboard on the Gold layer, and a final architecture + FinOps PDF report.
 | Free Edition has no billing data | FinOps uses measured runtimes + stated pricing assumptions |
 | Only ~31 days of data | Day-of-week and regime results are indicative; state this in the report |
 | Power BI overruns | Khushbakht takes the Pipeline Monitoring page and DAX measures |
+| Databricks kernel errors on serverless | Disconnect/reconnect compute, hard refresh, re-run (see E007) |
 | Unequal workload | Rule 16 in TASK_DIVISION: rebalance at check-in |
 
 ## Milestones
@@ -146,7 +147,7 @@ dashboard on the Gold layer, and a final architecture + FinOps PDF report.
 |---|---|---|
 | Phase 1 complete | before 2026-10-10 | Done |
 | Phase 2 complete (Bronze + Silver) | 2026-10-11 | Done |
-| Gold built (08-11) + logged | <date> | |
+| Gold built (08-11) + logged | 2026-10-17 | Done |
 | Orchestrator + validation (12-13) | <date> | |
 | Power BI dashboard | <date> | |
 | Report PDF + submission | <date> | |
